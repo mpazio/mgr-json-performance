@@ -8,7 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CouchbaseNetClient" Version="3.4.15" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
     <PackageReference Include="Npgsql" Version="8.0.2" />
+    <PackageReference Include="NRedisStack" Version="0.11.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess" Version="23.3.1-dev" />
   </ItemGroup>
 
 </Project>
