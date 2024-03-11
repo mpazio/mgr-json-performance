@@ -1,4 +1,4 @@
-﻿namespace JSONPerformance;
+﻿namespace JSONPerformance.Contracts;
 
 public interface IDatabase
 {

@@ -1,9 +1,9 @@
 ﻿using JetBrains.Annotations;
-using JSONPerformance;
+using JSONPerformance.Databases;
 using Moq;
 using Xunit;
 
-namespace JSONPerformance.Tests;
+namespace JSONPerformance.Tests.Databases;
 
 [TestSubject(typeof(Database))]
 public class DatabaseTest

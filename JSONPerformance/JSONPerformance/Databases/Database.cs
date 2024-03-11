@@ -1,4 +1,6 @@
-﻿namespace JSONPerformance;
+﻿using JSONPerformance.Contracts;
+
+namespace JSONPerformance.Databases;
 
 public abstract class Database(string connectionString) : IDatabase
 {
