@@ -25,7 +25,7 @@ public class PerformanceTimerTest
         Assert.True(res < timeSpanWithErrorMargin);
     }
 
-    private Task WaitOneSecond(string parameter)
+    private static Task WaitOneSecond(string parameter)
     {
         Thread.Sleep(1000);
         return Task.CompletedTask;
