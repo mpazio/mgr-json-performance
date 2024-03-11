@@ -1,11 +1,8 @@
 ﻿namespace JSONPerformance;
 
-public abstract class Database : IDatabase
+public abstract class Database(string connectionString) : IDatabase
 {
-    protected Database(string connectionString)
-    {
-        
-    }
+    public string ConnectionString { get; } = connectionString;
 
     public abstract Task Connect();
     public abstract Task<bool> IsConnected();
