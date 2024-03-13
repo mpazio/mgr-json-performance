@@ -4,24 +4,24 @@ namespace JSONPerformance.Databases;
 
 public class Mongo: Database
 {
-    private MongoClient _client;
-    
+    public IMongoClient Client { get; set; }
+
     public Mongo(string connectionString) : base(connectionString)
     {
-        _client = new MongoClient(connectionString);
+        Client = new MongoClient(connectionString);
     }
     
     public override async Task Connect()
     {
-        _client = new MongoClient(ConnectionString);
+        Client = new MongoClient(ConnectionString);
     }
 
     public override async Task<bool> IsConnected()
     {
         try
         {
-            var ping = _client.ListDatabaseNames().FirstOrDefault();
-            return ping is not null;
+            await Client.ListDatabaseNamesAsync();
+            return true;
         }
         catch (Exception)
         {
