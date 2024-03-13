@@ -1,23 +1,34 @@
-﻿using Couchbase;
+﻿using CouchDB.Client;
+using CouchDB.Client.FluentMango;
 
 namespace JSONPerformance.Databases;
 
 public class CouchDb : Database
 {
-    private ICluster _cluster;
+    private CouchClient _client;
+    private readonly HttpClient _httpClient;
+
     public CouchDb(string connectionString) : base(connectionString)
     {
-        
+        _httpClient = new HttpClient();
     }
 
     public override async Task Connect()
     {
-        _cluster = await Cluster.ConnectAsync(ConnectionString);
+        _client = new CouchClient(ConnectionString);
     }
 
-    public override Task<bool> IsConnected()
+    public override async Task<bool> IsConnected()
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _client.ListAllDatabasesAsync();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     public override Task SeedDatabase(string[] data, params string[]? parameters)
@@ -25,8 +36,19 @@ public class CouchDb : Database
         throw new NotImplementedException();
     }
 
-    public override Task ExecuteQuery(string query)
+    public override async Task ExecuteQuery(string query)
     {
-        throw new NotImplementedException();
+        var db = await _client.GetDatabaseAsync("test");
+        try
+        {
+            await _httpClient.PostAsync($"{ConnectionString}/test/_find",
+                new StringContent(query));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
     }
 }
