@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommandDotNet" Version="7.0.3" />
     <PackageReference Include="CouchbaseNetClient" Version="3.4.15" />
     <PackageReference Include="CouchDB.Client" Version="1.0.13" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
