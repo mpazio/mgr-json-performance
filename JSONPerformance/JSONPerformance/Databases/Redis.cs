@@ -1,10 +1,15 @@
-﻿using StackExchange.Redis;
+﻿using NRedisStack;
+using NRedisStack.RedisStackCommands;
+using NRedisStack.Search;
+using StackExchange.Redis;
 
 namespace JSONPerformance.Databases;
 
 public class Redis : Database
 {
     private ConnectionMultiplexer _redis;
+    private IDatabase _db;
+    private SearchCommands _ft;
     public Redis(string connectionString) : base(connectionString)
     {
         
@@ -13,20 +18,42 @@ public class Redis : Database
     public override async Task Connect()
     {
         _redis = await ConnectionMultiplexer.ConnectAsync(ConnectionString);
+        _db = _redis.GetDatabase();
+        _ft = _db.FT();
     }
 
     public override Task<bool> IsConnected()
     {
-        throw new NotImplementedException();
+        return Task.FromResult(_redis.IsConnected);
     }
 
-    public override Task SeedDatabase(string[] data)
+    public override Task SeedDatabase(string[] data, params string[]? parameters)
     {
-        throw new NotImplementedException();
+        if (parameters is null || parameters.Length < 1)
+        {
+            throw new Exception();
+        }
+        
+        if (parameters.Length < 3)
+        {
+            throw new Exception();
+        }
+        
+        var json = _db.JSON();
+        var index = 1;
+        var indexName = parameters[0];
+        var path = parameters[1];
+        
+        foreach (var insert in data)
+        {
+            json.Set($"{indexName}:{index++}", path, insert);
+        }
+        return Task.FromResult(true);
     }
 
-    public override Task ExecuteQuery(string query)
+    public override async Task ExecuteQuery(string query)
     {
-        throw new NotImplementedException();
+        var res = await _ft.SearchAsync("userIndex", new Query(query));
+        var documents = res.Documents.Select(x => x["json"]);
     }
 }

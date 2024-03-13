@@ -8,6 +8,6 @@ public abstract class Database(string connectionString) : IDatabase
 
     public abstract Task Connect();
     public abstract Task<bool> IsConnected();
-    public abstract Task SeedDatabase(string[] data);
+    public abstract Task SeedDatabase(string[] data, params string[]? parameters);
     public abstract Task ExecuteQuery(string query);
 }

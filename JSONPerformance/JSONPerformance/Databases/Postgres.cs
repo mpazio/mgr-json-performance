@@ -32,7 +32,7 @@ public class Postgres : Database
         }
     }
 
-    public override async Task SeedDatabase(string[] data)
+    public override async Task SeedDatabase(string[] data, params string[]? parameters)
     {
         if (!await IsConnected()) return;
         await using (var cmd = new NpgsqlCommand())

@@ -21,7 +21,7 @@ public class SqlServer : Database
         throw new NotImplementedException();
     }
 
-    public override Task SeedDatabase(string[] data)
+    public override Task SeedDatabase(string[] data, params string[]? parameters)
     {
         throw new NotImplementedException();
     }

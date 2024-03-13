@@ -29,7 +29,7 @@ public class Mongo: Database
         }
     }
 
-    public override Task SeedDatabase(string[] data)
+    public override Task SeedDatabase(string[] data, params string[]? parameters)
     {
         throw new NotImplementedException();
     }
