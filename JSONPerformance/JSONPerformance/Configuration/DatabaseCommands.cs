@@ -7,12 +7,12 @@ namespace JSONPerformance.Configuration;
 [Subcommand]
 public class DatabaseCommands
 {
-    public void Truncate(PossibleDatabases databases)
+    public void Truncate(PossibleDatabases databases, string connectionString)
     {
         
     }
     
-    public void Seed(PossibleDatabases databases, string pathToData)
+    public void Seed(PossibleDatabases databases, string connectionString, string pathToData)
     {
         
     }
