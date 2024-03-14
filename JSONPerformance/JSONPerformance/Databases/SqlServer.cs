@@ -1,10 +1,11 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace JSONPerformance.Databases;
 
 public class SqlServer : Database
 {
-    private SqlConnection _connection;
+    private SqlConnection? _connection;
     
     public SqlServer(string connectionString) : base(connectionString)
     {
@@ -14,25 +15,57 @@ public class SqlServer : Database
     public override async Task Connect()
     {
         _connection = new SqlConnection(ConnectionString);
+        await _connection.OpenAsync();
     }
 
     public override Task<bool> IsConnected()
     {
-        throw new NotImplementedException();
+        if (_connection is null) return Task.FromResult(false);
+        switch (_connection.State)
+        {
+            case ConnectionState.Closed:
+            case ConnectionState.Broken:
+                return Task.FromResult(false);
+            default:
+                return Task.FromResult(true);
+        }
     }
 
-    public override Task SeedDatabase(string[] data, params string[]? parameters)
+    public override async Task SeedDatabase(string[] data, params string[]? parameters)
     {
-        throw new NotImplementedException();
+        if (!await IsConnected()) return;
+        await using (var cmd = new SqlCommand())
+        {
+            cmd.Connection = _connection;
+            foreach (var query in data)
+            {
+                cmd.CommandText = query;
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
     }
 
-    public override Task Truncate(string tableName, params string[]? parameters)
+    public override async Task Truncate(string tableName, params string[]? parameters)
     {
-        throw new NotImplementedException();
+        if (!await IsConnected()) return;
+        await using (var cmd = new SqlCommand())
+        {
+            cmd.Connection = _connection;
+            cmd.CommandText = $"TRUNCATE TABLE {tableName}";
+            
+            await cmd.ExecuteNonQueryAsync();
+        }
     }
 
-    public override Task ExecuteQuery(string query)
+    public override async Task ExecuteQuery(string query)
     {
-        throw new NotImplementedException();
+        if (!await IsConnected()) return;
+        await using (var cmd = new SqlCommand())
+        {
+            cmd.Connection = _connection;
+            cmd.CommandText = query;
+
+            await cmd.ExecuteNonQueryAsync();
+        }
     }
 }
