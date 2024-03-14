@@ -7,9 +7,11 @@ namespace JSONPerformance.Configuration;
 [Subcommand]
 public class DatabaseCommands
 {
-    public void Truncate(PossibleDatabases databases, string connectionString)
+    public async Task Truncate(PossibleDatabases databases, string connectionString, string tableName)
     {
-        
+        var database = CommandsHelpers.GetDatabases(databases, connectionString);
+        await database.Connect();
+        await database.Truncate(tableName);
     }
     
     public void Seed(PossibleDatabases databases, string connectionString, string pathToData)

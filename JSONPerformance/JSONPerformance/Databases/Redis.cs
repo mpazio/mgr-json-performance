@@ -51,6 +51,11 @@ public class Redis : Database
         return Task.FromResult(true);
     }
 
+    public override Task Truncate(string tableName, params string[]? parameters)
+    {
+        throw new NotImplementedException();
+    }
+
     public override async Task ExecuteQuery(string query)
     {
         var res = await _ft.SearchAsync("userIndex", new Query(query));

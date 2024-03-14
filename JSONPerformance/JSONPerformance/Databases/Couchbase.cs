@@ -36,12 +36,17 @@ public class Couchbase : Database
         throw new NotImplementedException();
     }
 
+    public override Task Truncate(string tableName, params string[]? parameters)
+    {
+        throw new NotImplementedException();
+    }
+
     public override async Task ExecuteQuery(string query)
     {
         var statement = "SELECT * FROM `data`";
 
         var results = await _cluster.QueryAsync<dynamic>(statement);
 
-        await foreach (var result in results) Console.WriteLine(result);
+        // await foreach (var result in results) Console.WriteLine(result);
     }
 }

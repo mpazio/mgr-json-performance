@@ -36,6 +36,11 @@ public class CouchDb : Database
         throw new NotImplementedException();
     }
 
+    public override Task Truncate(string tableName, params string[]? parameters)
+    {
+        throw new NotImplementedException();
+    }
+
     public override async Task ExecuteQuery(string query)
     {
         var db = await _client.GetDatabaseAsync("test");

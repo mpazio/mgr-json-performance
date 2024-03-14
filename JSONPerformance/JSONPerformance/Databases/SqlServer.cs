@@ -26,6 +26,11 @@ public class SqlServer : Database
         throw new NotImplementedException();
     }
 
+    public override Task Truncate(string tableName, params string[]? parameters)
+    {
+        throw new NotImplementedException();
+    }
+
     public override Task ExecuteQuery(string query)
     {
         throw new NotImplementedException();

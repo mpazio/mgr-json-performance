@@ -47,6 +47,11 @@ public class Postgres : Database
         
     }
 
+    public override Task Truncate(string tableName, params string[]? parameters)
+    {
+        throw new NotImplementedException();
+    }
+
     public override async Task ExecuteQuery(string query)
     {
         if (!await IsConnected()) return;

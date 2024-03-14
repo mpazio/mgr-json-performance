@@ -2,11 +2,11 @@
 
 namespace JSONPerformance.Databases;
 
-public class Mongo: Database
+public class MongoDb: Database
 {
     public IMongoClient Client { get; set; }
 
-    public Mongo(string connectionString) : base(connectionString)
+    public MongoDb(string connectionString) : base(connectionString)
     {
         Client = new MongoClient(connectionString);
     }
@@ -30,6 +30,11 @@ public class Mongo: Database
     }
 
     public override Task SeedDatabase(string[] data, params string[]? parameters)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Task Truncate(string tableName, params string[]? parameters)
     {
         throw new NotImplementedException();
     }
