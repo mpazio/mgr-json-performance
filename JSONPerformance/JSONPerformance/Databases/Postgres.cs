@@ -47,9 +47,16 @@ public class Postgres : Database
         
     }
 
-    public override Task Truncate(string tableName, params string[]? parameters)
+    public override async Task Truncate(string tableName, params string[]? parameters)
     {
-        throw new NotImplementedException();
+        if (!await IsConnected()) return;
+        await using (var cmd = new NpgsqlCommand())
+        {
+            cmd.Connection = Connection;
+            cmd.CommandText = $"TRUNCATE TABLE {tableName}";
+            
+            await cmd.ExecuteNonQueryAsync();
+        }
     }
 
     public override async Task ExecuteQuery(string query)

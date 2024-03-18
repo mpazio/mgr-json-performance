@@ -9,12 +9,12 @@ public class Oracle : Database
     
     public Oracle(string connectionString) : base(connectionString)
     {
-        
+        _connection = new OracleConnection(ConnectionString);
     }
 
     public override async Task Connect()
     {
-        _connection = new OracleConnection(ConnectionString);
+        await _connection.OpenAsync();
     }
 
     public override Task<bool> IsConnected()
@@ -44,9 +44,16 @@ public class Oracle : Database
         }
     }
 
-    public override Task Truncate(string tableName, params string[]? parameters)
+    public override async Task Truncate(string tableName, params string[]? parameters)
     {
-        throw new NotImplementedException();
+        if (!await IsConnected()) return;
+        await using (var cmd = new OracleCommand())
+        {
+            cmd.Connection = _connection;
+            cmd.CommandText = $"TRUNCATE TABLE {tableName}";
+            
+            await cmd.ExecuteNonQueryAsync();
+        }
     }
 
     public override async Task ExecuteQuery(string query)
