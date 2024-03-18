@@ -11,6 +11,8 @@ public class DatabaseCommands
     {
         var database = CommandsHelpers.GetDatabases(databases, connectionString);
         await database.Connect();
+        if (!await database.IsConnected())
+            throw new Exception("Not connected to database");
         await database.Truncate(tableName);
         
         Console.WriteLine($"Data collection - {tableName} was successfully truncated in database - {databases.ToString()}");
@@ -20,6 +22,8 @@ public class DatabaseCommands
     {
         var database = CommandsHelpers.GetDatabases(databases, connectionString);
         await database.Connect();
+        if (!await database.IsConnected())
+            throw new Exception("Not connected to database");
         var data = await File.ReadAllLinesAsync(pathToData);
         await database.SeedDatabase(data);
         
@@ -30,6 +34,8 @@ public class DatabaseCommands
     {
         var database = CommandsHelpers.GetDatabases(databases, connectionString);
         await database.Connect();
+        if (!await database.IsConnected())
+            throw new Exception("Not connected to database");
         await database.Truncate(tableName);
         Console.WriteLine($"Data collection - {tableName} was successfully truncated in database - {databases.ToString()}");
         
