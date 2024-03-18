@@ -34,7 +34,7 @@ public class Redis : Database
             throw new Exception();
         }
         
-        if (parameters.Length < 3)
+        if (parameters.Length != 2)
         {
             throw new Exception();
         }
@@ -43,7 +43,7 @@ public class Redis : Database
         var index = 1;
         var indexName = parameters[0];
         var path = parameters[1];
-        
+
         foreach (var insert in data)
         {
             json.Set($"{indexName}:{index++}", path, insert);
@@ -51,9 +51,9 @@ public class Redis : Database
         return Task.FromResult(true);
     }
 
-    public override Task Truncate(string tableName, params string[]? parameters)
+    public override async Task Truncate(string tableName, params string[]? parameters)
     {
-        throw new NotImplementedException();
+        await _db.ExecuteAsync("FLUSHDB");
     }
 
     public override async Task ExecuteQuery(string query)
