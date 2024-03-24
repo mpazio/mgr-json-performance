@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace JSONPerformance.Databases;
 
@@ -23,24 +24,45 @@ public class MongoDb: Database
             await Client.ListDatabaseNamesAsync();
             return true;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Console.WriteLine("Ex"+ ex);
             return false;
         }
     }
 
-    public override Task SeedDatabase(string[] data, params string[]? parameters)
+    public override async Task SeedDatabase(string[] data, params string[]? parameters)
     {
-        throw new NotImplementedException();
+        var db = Client.GetDatabase("test");
+        var collections = (await db.ListCollectionNamesAsync()).ToList();
+        var isThereJsonData = collections.Any(e => e.Equals("jsondata"));
+        if(!isThereJsonData){
+        {
+            await db.CreateCollectionAsync("jsondata");
+        }}
+
+        var collection = db.GetCollection<BsonDocument>("jsondata");
+
+        List<BsonDocument> bsonData = new List<BsonDocument>();
+        foreach (var d in data)
+        {
+            bsonData.Add(BsonDocument.Parse(d));
+        }
+        
+        await collection.InsertManyAsync(bsonData);
+
     }
 
-    public override Task Truncate(string tableName, params string[]? parameters)
+    public override async Task Truncate(string tableName, params string[]? parameters)
     {
-        throw new NotImplementedException();
+        var db = Client.GetDatabase("test");
+        await db.DropCollectionAsync(tableName);
     }
 
-    public override Task ExecuteQuery(string query)
+    public override async Task ExecuteQuery(string query)
     {
-        throw new NotImplementedException();
+        var db = Client.GetDatabase("test");
+        var bsonQuery = new JsonCommand<BsonDocument>(query);
+        await db.RunCommandAsync(bsonQuery);
     }
 }
