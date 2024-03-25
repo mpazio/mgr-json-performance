@@ -1,2 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using CommandDotNet;
+using JSONPerformance.Configuration;
+
+return new AppRunner<Commands>().Run(args);
