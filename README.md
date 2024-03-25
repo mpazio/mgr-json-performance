@@ -62,6 +62,31 @@ Latest version of the application can be found in Releases in the repository.
 
 ### Database - truncate
 
+Usage:
+
+```
+Usage: JSONPerformance.exe Database Truncate [options] <database> <connectionString> <tableName>
+
+Arguments:
+
+  database          <POSSIBLEDATABASES>
+  Name of the database where the data will be truncated
+  Allowed values: Couchbase, CouchDb, MongoDb, Oracle, Postgres, Redis, SqlServer
+
+  connectionString  <TEXT>
+  Valid connection string to selected database
+
+  tableName         <TEXT>
+  Name of the table/cluster/persistence storage from which data will be truncated
+
+Options:
+
+  -p | --param (Multiple)  <TEXT>
+  Additional parameters for specific database cases
+```
+
+Example commands for every supported database:
+
 - Postgres
 
   ```console
