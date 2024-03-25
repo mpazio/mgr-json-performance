@@ -126,3 +126,71 @@ Example commands for every supported database:
   ```console
   .\JSONPerformance.exe Database Truncate CouchDb "http://127.0.0.1:5984" test -p admin -p password
   ```
+
+### Database - seed
+
+Usage:
+
+```
+Usage: JSONPerformance.exe Database Seed [options] <database> <connectionString> <pathToData>
+
+Arguments:
+
+  database          <POSSIBLEDATABASES>
+  Name of the database where the data will be seeded
+  Allowed values: Couchbase, CouchDb, MongoDb, Oracle, Postgres, Redis, SqlServer
+
+  connectionString  <TEXT>
+  Valid connection string to selected database
+
+  pathToData        <TEXT>
+  Local path to data file with inserts or JSON data that will be used for seeding
+
+Options:
+
+  -p | --param (Multiple)  <TEXT>
+  Additional parameters for specific database cases
+```
+
+Example commands for every supported database:
+
+- Postgres
+
+  ```console
+  .\JSONPerformance.exe Database Seed Postgres "Host=localhost;Port=5432;Username=postgres;Password=admin;Database=postgres" "../jsondata/postgresinserts.txt"
+  ```
+
+- SqlServer
+
+  ```console
+  .\JSONPerformance.exe Database Seed SqlServer "Data Source=localhost;User ID=SA;Password=yourStrong(!)Password;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False;Initial Catalog=mgr" "../jsondata/sqlserverinserts.txt"
+  ```
+
+- Oracle
+
+  ```console
+  .\JSONPerformance.exe Database Seed Oracle "user id=mgr; password=admin; data source=localhost:1521/XEPDB1" "../jsondata/oracleinserts.txt"
+  ```
+
+- MongoDb
+
+  ```console
+  .\JSONPerformance.exe Database Seed MongoDb "mongodb://root:example@localhost:27017/" "../jsondata/genericinserts.txt"
+  ```
+
+- Redis
+  Needs special parameters: `schema` and `path`
+
+  ```console
+  .\JSONPerformance.exe Database Seed Redis localhost:7000 "../jsondata/redisinserts.txt" -p "user" -p "$"
+  ```
+
+- Couchbase
+  ```console
+  .\JSONPerformance.exe Database Seed Couchbase "couchbase://localhost" "../jsondata/genericinserts.txt"
+  ```
+- CouchDb
+  Needs special parameters: `login` and `password`
+  ```console
+  .\JSONPerformance.exe Database Seed CouchDb "http://127.0.0.1:5984" "../jsondata/genericinserts.txt" -p admin -p password
+  ```
