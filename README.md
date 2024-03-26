@@ -10,6 +10,9 @@ Apart from measuring performance it supports truncating and seeding data.
 - [How to use](#how-to-use)
 - [Publish](#publish)
 - [Example usage](#example-usage)
+  - [Database - truncate](#database-truncate)
+  - [Database - seed](#database-seed)
+  - [Database - truncate and seed](#database-truncate-and-seed)
 
 <a name='supported-databases'></a>
 
@@ -59,6 +62,8 @@ Latest version of the application can be found in Releases in the repository.
 <a name='example-usage'></a>
 
 ## Example usage
+
+<a name='database-truncate'></a>
 
 ### Database - truncate
 
@@ -126,6 +131,7 @@ Example commands for every supported database:
   ```console
   .\JSONPerformance.exe Database Truncate CouchDb "http://127.0.0.1:5984" test -p admin -p password
   ```
+  <a name='database-seed'></a>
 
 ### Database - seed
 
@@ -193,4 +199,77 @@ Example commands for every supported database:
   Needs special parameters: `login` and `password`
   ```console
   .\JSONPerformance.exe Database Seed CouchDb "http://127.0.0.1:5984" "../jsondata/genericinserts.txt" -p admin -p password
+  ```
+
+<a name='database-truncate-and-seed'></a>
+
+### Database - truncate and seed
+
+Usage:
+
+```
+Usage: JSONPerformance.exe Database TruncateAndSeed [options] <database> <connectionString> <tableName> <pathToData>
+
+Arguments:
+
+  database          <POSSIBLEDATABASES>
+  Name of the database where the data will be seeded
+  Allowed values: Couchbase, CouchDb, MongoDb, Oracle, Postgres, Redis, SqlServer
+
+  connectionString  <TEXT>
+  Valid connection string to selected database
+
+  tableName         <TEXT>
+  Name of the table/cluster/persistence storage from which data will be truncated
+
+  pathToData        <TEXT>
+  Local path to data file with inserts or JSON data that will be used for seeding
+
+Options:
+
+  -p | --param (Multiple)  <TEXT>
+  Additional parameters for specific database cases
+```
+
+Example commands for every supported database:
+
+- Postgres
+
+  ```console
+  .\JSONPerformance.exe Database TruncateAndSeed Postgres "Host=localhost;Port=5432;Username=postgres;Password=admin;Database=postgres" jsondata "../jsondata/postgresinserts.txt"
+  ```
+
+- SqlServer
+
+  ```console
+  .\JSONPerformance.exe Database TruncateAndSeed SqlServer "Data Source=localhost;User ID=SA;Password=yourStrong(!)Password;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False;Initial Catalog=mgr" jsondata "../jsondata/sqlserverinserts.txt"
+  ```
+
+- Oracle
+
+  ```console
+  .\JSONPerformance.exe Database TruncateAndSeed Oracle "user id=mgr; password=admin; data source=localhost:1521/XEPDB1" jsondata "../jsondata/oracleinserts.txt"
+  ```
+
+- MongoDb
+
+  ```console
+   .\JSONPerformance.exe Database TruncateAndSeed MongoDb "mongodb://root:example@localhost:27017/" jsondata "../jsondata/genericinserts.txt"
+  ```
+
+- Redis
+  Needs special parameters: `schema` and `path`
+
+  ```console
+  .\JSONPerformance.exe Database TruncateAndSeed Redis localhost:7000 jsondata "../jsondata/redisinserts.txt" -p "user" -p "$"
+  ```
+
+- Couchbase
+  ```console
+  .\JSONPerformance.exe Database TruncateAndSeed Couchbase "couchbase://localhost" data "../jsondata/genericinserts.txt"
+  ```
+- CouchDb
+  Needs special parameters: `login` and `password`
+  ```console
+  .\JSONPerformance.exe Database TruncateAndSeed CouchDb "http://127.0.0.1:5984" test "../jsondata/genericinserts.txt" -p admin -p password
   ```

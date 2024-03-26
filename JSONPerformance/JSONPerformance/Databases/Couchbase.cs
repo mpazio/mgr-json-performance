@@ -42,7 +42,7 @@ public class Couchbase : Database
         for (int i = 0; i < data.Length; i++)
         {
             dynamic v = JObject.Parse(data[i]);
-            Console.WriteLine(v);
+            // Console.WriteLine(v);
             
             await collection.InsertAsync<dynamic>(i.ToString(), v);
         }

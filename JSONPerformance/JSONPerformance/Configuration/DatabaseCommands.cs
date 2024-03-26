@@ -14,7 +14,8 @@ public class DatabaseCommands
         string connectionString, 
         [Operand("tableName", Description = "Name of the table/cluster/persistence storage from which data will be truncated")]
         string tableName, 
-        [Option('p', "param", Description = "Additional parameters for specific database cases")] params string[]? additionalParameters)
+        [Option('p', "param", Description = "Additional parameters for specific database cases")] 
+        params string[]? additionalParameters)
     {
         var database = CommandsHelpers.GetDatabases(databases, connectionString);
         try
@@ -41,7 +42,8 @@ public class DatabaseCommands
         string connectionString, 
         [Operand("pathToData", Description = "Local path to data file with inserts or JSON data that will be used for seeding")]
         string pathToData, 
-        [Option('p', "param", Description = "Additional parameters for specific database cases")] params string[]? additionalParameters)
+        [Option('p', "param", Description = "Additional parameters for specific database cases")] 
+        params string[]? additionalParameters)
     {
         var database = CommandsHelpers.GetDatabases(databases, connectionString);
         try
@@ -61,18 +63,45 @@ public class DatabaseCommands
         }
     }
 
-    public async Task TruncateAndSeed(PossibleDatabases databases, string connectionString, string tableName, string pathToData, [Option('p', "param")] params string[]? additionalParameters)
+    public async Task TruncateAndSeed(
+        [Operand("database", Description = "Name of the database where the data will be seeded")]
+        PossibleDatabases databases, 
+        [Operand("connectionString", Description = "Valid connection string to selected database")]
+        string connectionString, 
+        [Operand("tableName", Description = "Name of the table/cluster/persistence storage from which data will be truncated")]
+        string tableName, 
+        [Operand("pathToData", Description = "Local path to data file with inserts or JSON data that will be used for seeding")]
+        string pathToData, 
+        [Option('p', "param", Description = "Additional parameters for specific database cases")] 
+        params string[]? additionalParameters)
     {
         var database = CommandsHelpers.GetDatabases(databases, connectionString);
-        await database.Connect();
-        if (!await database.IsConnected())
-            throw new Exception("Not connected to database");
-        await database.Truncate(tableName);
-        Console.WriteLine($"Data collection - {tableName} was successfully truncated in database - {databases.ToString()}");
+        try
+        {
+            await database.Connect();
+            if (!await database.IsConnected())
+                throw new Exception("Not connected to database");
+            await database.Truncate(tableName, additionalParameters);
+            Console.WriteLine($"Data collection - {tableName} was successfully truncated in database - {databases.ToString()}");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Truncating failed!");
+            throw;
+        }
+
+        try
+        {
+            var data = await File.ReadAllLinesAsync(pathToData);
+            await database.SeedDatabase(data, additionalParameters);
         
-        var data = await File.ReadAllLinesAsync(pathToData);
-        await database.SeedDatabase(data, additionalParameters);
+            Console.WriteLine($"Database - {databases.ToString()} - was successfully seeded.");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Seeding failed!");
+            throw;
+        }
         
-        Console.WriteLine($"Database - {databases.ToString()} - was successfully seeded.");
     }
 }
