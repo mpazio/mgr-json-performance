@@ -14,6 +14,7 @@ Apart from measuring performance it supports truncating and seeding data.
   - [Database - seed](#database-seed)
   - [Database - truncate and seed](#database-truncate-and-seed)
   - [Database - time query](#database-time-query)
+  - [Database - integrity run](#database-integrity-run)
 
 <a name='supported-databases'></a>
 
@@ -374,4 +375,74 @@ Example commands for every supported database:
 - CouchDb
   ```console
   .\JSONPerformance.exe Performance TimeQuery CouchDb "http://127.0.0.1:5984" "{\`"selector\`":{\`"_id\`":{\`"`$gt\`":null}}}"
+  ```
+
+<a name='database-integrity-run'></a>
+
+### Database - integrity run
+
+Usage:
+
+```
+Usage: JSONPerformance.exe Integrity Run [options] <databases> <connectionString> <query>
+
+Arguments:
+
+  databases         <POSSIBLEDATABASES>
+  Allowed values: Couchbase, CouchDb, MongoDb, Oracle, Postgres, Redis, SqlServer
+
+  connectionString  <TEXT>
+
+  query             <TEXT>
+
+Options:
+
+  -f | --filepath          <TEXT>  [.]
+  Path where result file will be created
+
+  -p | --param (Multiple)  <TEXT>
+  Additional parameters for specific database cases
+```
+
+This command will create `integrityResult.json` file that might be different for each database.
+
+Example commands for every supported database:
+
+- Postgres
+
+  ```console
+  .\JSONPerformance.exe Integrity Run Postgres "Host=localhost;Port=5432;Username=postgres;Password=admin;Database=postgres" "SELECT json_document FROM jsondata LIMIT 10"
+  ```
+
+- SqlServer
+
+  ```console
+  .\JSONPerformance.exe Integrity Run SqlServer "Data Source=localhost;User ID=SA;Password=yourStrong(!)Password;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False;Initial Catalog=mgr" "SELECT json_document FROM jsondata"
+  ```
+
+- Oracle
+
+  ```console
+  .\JSONPerformance.exe Integrity Run Oracle "user id=mgr; password=admin; data source=localhost:1521/XEPDB1" "SELECT json_document FROM jsondata"
+  ```
+
+- MongoDb
+
+  ```console
+  .\JSONPerformance.exe Integrity Run MongoDb "mongodb://root:example@localhost:27017/" "{\`"find\`": \`"jsondata\`"}" -p "test"
+  ```
+
+- Redis
+
+  ```console
+   .\JSONPerformance.exe Integrity Run Redis localhost:7000 "@firstName:(Ricky)" -p "userIndex"
+  ```
+
+- Couchbase
+  ```console
+  .\JSONPerformance.exe Integrity Run Couchbase "couchbase://localhost" "SELECT * FROM `data` WHERE data.firstName = \`"Willie\`""
+  ```
+- CouchDb
+  ```console
+  .\JSONPerformance.exe Integrity Run CouchDb "http://127.0.0.1:5984" "{\`"selector\`":{\`"_id\`":{\`"`$gt\`":null}}}"
   ```

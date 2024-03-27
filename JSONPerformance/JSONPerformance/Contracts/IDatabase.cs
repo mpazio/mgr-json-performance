@@ -7,4 +7,5 @@ public interface IDatabase
     Task SeedDatabase(string[] data, params string[]? parameters);
     Task Truncate(string tableName, params string[]? parameters);
     Task ExecuteQuery(string query);
+    Task<string> ExecuteQueryAndReturnStringResult(string query, params string[]? parameters);
 }

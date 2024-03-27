@@ -1,4 +1,5 @@
-﻿using NRedisStack;
+﻿using System.Text.Json;
+using NRedisStack;
 using NRedisStack.RedisStackCommands;
 using NRedisStack.Search;
 using StackExchange.Redis;
@@ -60,5 +61,33 @@ public class Redis : Database
     {
         var res = await _ft.SearchAsync("userIndex", new Query(query));
         var documents = res.Documents.Select(x => x["json"]);
+    }
+
+    public override async Task<string> ExecuteQueryAndReturnStringResult(string query, params string[]? parameters)
+    {
+        if (parameters.Length != 1)
+            throw new ArgumentOutOfRangeException(nameof(parameters));
+
+        var index = parameters[0];
+        
+        var res = await _ft.SearchAsync(index, new Query(query));
+        var documents = res.Documents.Select(x =>
+        {
+            var props = x.GetProperties();
+            var doc = "";
+            foreach (var keyValuePair in props)
+            {
+                doc = x[keyValuePair.Key];
+            }
+            return doc;
+        });
+        
+        var jsonRes = JsonSerializer.Serialize(documents, new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            PropertyNameCaseInsensitive = true
+        });
+
+        return jsonRes;
     }
 }

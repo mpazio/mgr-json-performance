@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using System.Text.Json;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace JSONPerformance.Databases;
@@ -64,5 +65,25 @@ public class MongoDb: Database
         var db = Client.GetDatabase("test");
         var bsonQuery = new JsonCommand<BsonDocument>(query);
         await db.RunCommandAsync(bsonQuery);
+    }
+
+    public override async Task<string> ExecuteQueryAndReturnStringResult(string query, params string[]? parameters)
+    {
+        if (parameters.Length != 1)
+            throw new ArgumentOutOfRangeException(nameof(parameters));
+
+        var databaseName = parameters[0];
+        
+        var db = Client.GetDatabase(databaseName);
+        var bsonQuery = new JsonCommand<BsonDocument>(query);
+        var res = await db.RunCommandAsync(bsonQuery);
+
+        // var jsonRes = JsonSerializer.Serialize(res, new JsonSerializerOptions()
+        // {
+        //     WriteIndented = true,
+        //     PropertyNameCaseInsensitive = true
+        // });
+        
+        return res.ToString();
     }
 }

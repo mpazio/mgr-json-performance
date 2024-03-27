@@ -1,4 +1,5 @@
-﻿using Couchbase;
+﻿using System.Text.Json;
+using Couchbase;
 using MongoDB.Bson;
 using Newtonsoft.Json.Linq;
 
@@ -57,5 +58,17 @@ public class Couchbase : Database
     public override async Task ExecuteQuery(string query)
     {
         var results = await _cluster.QueryAsync<dynamic>(query);
+    }
+
+    public override async Task<string> ExecuteQueryAndReturnStringResult(string query, params string[]? parameters)
+    {
+        var results = await _cluster.QueryAsync<dynamic>(query);
+        var data = await results.ToListAsync();
+        var res = "";
+        foreach (var VARIABLE in data)
+        {
+            res += VARIABLE + "\n";
+        }
+        return res;
     }
 }

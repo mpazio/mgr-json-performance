@@ -68,4 +68,24 @@ public class SqlServer : Database
             await cmd.ExecuteNonQueryAsync();
         }
     }
+
+    public override async Task<string> ExecuteQueryAndReturnStringResult(string query, params string[]? parameters)
+    {
+        if (!await IsConnected()) return "";
+
+        string res = "";
+        await using (var cmd = new SqlCommand())
+        {
+            cmd.Connection = _connection;
+            cmd.CommandText = query;
+
+            var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                res += reader.GetValue(0) + "\n";
+            }
+        }
+
+        return res;
+    }
 }

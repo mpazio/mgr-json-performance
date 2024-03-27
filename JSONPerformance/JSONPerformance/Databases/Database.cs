@@ -12,4 +12,5 @@ public abstract class Database(string connectionString) : IDatabase
     public abstract Task SeedDatabase(string[] data, params string[]? parameters);
     public abstract Task Truncate(string tableName, params string[]? parameters);
     public abstract Task ExecuteQuery(string query);
+    public abstract Task<string> ExecuteQueryAndReturnStringResult(string query, params string[]? parameters);
 }

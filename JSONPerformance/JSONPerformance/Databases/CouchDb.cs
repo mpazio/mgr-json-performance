@@ -115,7 +115,34 @@ public class CouchDb : Database
         }
         
     }
-    
+
+    public override async Task<string> ExecuteQueryAndReturnStringResult(string query, params string[]? parameters)
+    {
+        var base64EncodedAuthenticationString = GetAuthenticationStringInBase64(new string[]{"admin", "password"});
+        try
+        {
+            _httpClient.DefaultRequestHeaders
+                .Accept
+                .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/test/_find");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
+            requestMessage.Content = new StringContent(query,
+                Encoding.UTF8, 
+                "application/json");
+            
+            var response = await _httpClient.SendAsync(requestMessage);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     private static string ParseData(string[] data)
     {
         string parsedData = "";
