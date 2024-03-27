@@ -13,6 +13,7 @@ Apart from measuring performance it supports truncating and seeding data.
   - [Database - truncate](#database-truncate)
   - [Database - seed](#database-seed)
   - [Database - truncate and seed](#database-truncate-and-seed)
+  - [Database - time query](#database-time-query)
 
 <a name='supported-databases'></a>
 
@@ -272,4 +273,105 @@ Example commands for every supported database:
   Needs special parameters: `login` and `password`
   ```console
   .\JSONPerformance.exe Database TruncateAndSeed CouchDb "http://127.0.0.1:5984" test "../jsondata/genericinserts.txt" -p admin -p password
+  ```
+
+<a name='database-time-query'></a>
+
+### Database - time query
+
+Usage:
+
+```
+Usage: JSONPerformance.exe Performance TimeQuery [options] <databases> <connectionString> <query>
+
+Arguments:
+
+  databases         <POSSIBLEDATABASES>
+  Allowed values: Couchbase, CouchDb, MongoDb, Oracle, Postgres, Redis, SqlServer
+
+  connectionString  <TEXT>
+
+  query             <TEXT>
+
+Options:
+
+  -p | --path   <TEXT>    [.]
+  Path where result file will be created
+
+  -c | --count  <NUMBER>  [10]
+  Number of runs that will be executed (Default is 10)
+```
+
+This command will create `result.json` file:
+
+```
+{
+  "Average": {
+    "Hours": 0,
+    "Minutes": 0,
+    "Seconds": 0,
+    "Milliseconds": 12,
+    "TimeSpan": "00:00:00.0124901"
+  },
+  "Times": [
+    {
+      "Hours": 0,
+      "Minutes": 0,
+      "Seconds": 0,
+      "Milliseconds": 107,
+      "TimeSpan": "00:00:00.1072575"
+    },
+    .
+    . rest of the runs
+    .
+    {
+      "Hours": 0,
+      "Minutes": 0,
+      "Seconds": 0,
+      "Milliseconds": 1,
+      "TimeSpan": "00:00:00.0016773"
+    }
+  ]
+}
+```
+
+Example commands for every supported database:
+
+- Postgres
+
+  ```console
+  .\JSONPerformance.exe Performance TimeQuery Postgres "Host=localhost;Port=5432;Username=postgres;Password=admin;Database=postgres" "SELECT * FROM jsondata"
+  ```
+
+- SqlServer
+
+  ```console
+  .\JSONPerformance.exe Performance TimeQuery SqlServer "Data Source=localhost;User ID=SA;Password=yourStrong(!)Password;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False;Initial Catalog=mgr" "SELECT * FROM jsondata"
+  ```
+
+- Oracle
+
+  ```console
+  .\JSONPerformance.exe Performance TimeQuery Oracle "user id=mgr; password=admin; data source=localhost:1521/XEPDB1" "SELECT * FROM jsondata"
+  ```
+
+- MongoDb
+
+  ```console
+  .\JSONPerformance.exe Performance TimeQuery MongoDb "mongodb://root:example@localhost:27017/" "{\`"find\`": \`"jsondata\`"}"
+  ```
+
+- Redis
+
+  ```console
+  .\JSONPerformance.exe Performance TimeQuery Redis localhost:7000 "FT.SEARCH userIndex '@firstName:(Arvid)'"
+  ```
+
+- Couchbase
+  ```console
+  .\JSONPerformance.exe Performance TimeQuery Couchbase "couchbase://localhost" "SELECT * FROM `data` WHERE data.firstName = \`"Willie\`""
+  ```
+- CouchDb
+  ```console
+  .\JSONPerformance.exe Performance TimeQuery CouchDb "http://127.0.0.1:5984" "{\`"selector\`":{\`"_id\`":{\`"`$gt\`":null}}}"
   ```
