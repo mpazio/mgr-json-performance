@@ -15,7 +15,9 @@ public class PerformanceCommands
         [Option('p', "path", Description = "Path where result file will be created")] 
         string path = ".",
         [Option('c', "count", Description = "Number of runs that will be executed (Default is 10)")] 
-        int numberOfRuns = 10)
+        int numberOfRuns = 10,
+        [Option('a', "param", Description = "Additional parameters for specific database cases")] 
+        params string[]? additionalParameters)
     {
         var database = CommandsHelpers.GetDatabases(databases, connectionString);
         try
@@ -24,7 +26,7 @@ public class PerformanceCommands
             List<TimeSpan> timespanList = new List<TimeSpan>();
             for (int i = 0; i < numberOfRuns; i++)
             {
-                var time = await PerformanceTimer.Measure(database.ExecuteQuery, query);
+                var time = await PerformanceTimer.Measure(database.ExecuteQuery, query, additionalParameters ?? new string[] {});
                 timespanList.Add(time);
             }
 

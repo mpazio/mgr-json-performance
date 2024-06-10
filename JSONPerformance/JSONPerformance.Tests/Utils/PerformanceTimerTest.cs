@@ -19,13 +19,13 @@ public class PerformanceTimerTest
         var timeSpanWithErrorMargin = TimeSpan.FromSeconds(1).Add(errorMargin);
         
         // Act
-        var res = await PerformanceTimer.Measure(WaitOneSecond, "someMessage");
+        var res = await PerformanceTimer.Measure(WaitOneSecond, "someMessage", new string[]{});
 
         // Assert
         Assert.True(res < timeSpanWithErrorMargin);
     }
 
-    private static Task WaitOneSecond(string parameter)
+    private static Task WaitOneSecond(string query, string[] parameters)
     {
         Thread.Sleep(1000);
         return Task.CompletedTask;
