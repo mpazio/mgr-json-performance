@@ -34,15 +34,21 @@ public class MongoDb: Database
 
     public override async Task SeedDatabase(string[] data, params string[]? parameters)
     {
-        var db = Client.GetDatabase("test");
+        if (parameters.Length != 2)
+            throw new ArgumentOutOfRangeException(nameof(parameters));
+        
+        var dbParam = parameters[0];
+        var collectionName = parameters[1];
+        
+        var db = Client.GetDatabase(dbParam);
         var collections = (await db.ListCollectionNamesAsync()).ToList();
-        var isThereJsonData = collections.Any(e => e.Equals("jsondata"));
+        var isThereJsonData = collections.Any(e => e.Equals(collectionName));
         if(!isThereJsonData){
         {
-            await db.CreateCollectionAsync("jsondata");
+            await db.CreateCollectionAsync(collectionName);
         }}
 
-        var collection = db.GetCollection<BsonDocument>("jsondata");
+        var collection = db.GetCollection<BsonDocument>(collectionName);
 
         List<BsonDocument> bsonData = new List<BsonDocument>();
         foreach (var d in data)
@@ -56,15 +62,30 @@ public class MongoDb: Database
 
     public override async Task Truncate(string tableName, params string[]? parameters)
     {
-        var db = Client.GetDatabase("test");
+        if (parameters.Length < 2)
+            throw new ArgumentOutOfRangeException(nameof(parameters));
+        
+        var dbParam = parameters[0];
+        
+        var db = Client.GetDatabase(dbParam);
         await db.DropCollectionAsync(tableName);
     }
 
-    public override async Task ExecuteQuery(string query)
+    public override async Task ExecuteQuery(string query, params string[]? parameters)
     {
+        Console.WriteLine(query);
         var db = Client.GetDatabase("test");
         var bsonQuery = new JsonCommand<BsonDocument>(query);
-        await db.RunCommandAsync(bsonQuery);
+        var res = db.RunCommandAsync(bsonQuery).ToAsyncEnumerable();
+        var e = res.GetAsyncEnumerator();
+        try
+        {
+            while (await e.MoveNextAsync())
+            {
+                Console.WriteLine(e.Current.ToString());
+            };
+        }
+        finally { if (e != null) await e.DisposeAsync(); }
     }
 
     public override async Task<string> ExecuteQueryAndReturnStringResult(string query, params string[]? parameters)

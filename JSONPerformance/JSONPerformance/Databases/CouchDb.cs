@@ -16,7 +16,7 @@ public class CouchDb : Database
 
     public CouchDb(string connectionString) : base(connectionString)
     {
-        _httpClient = new HttpClient();
+        _httpClient = new HttpClient() {Timeout = TimeSpan.FromSeconds(1000)};
         Uri baseUri = new Uri(connectionString);
         _httpClient.BaseAddress = baseUri;
         _httpClient.DefaultRequestHeaders.Clear();
@@ -90,7 +90,7 @@ public class CouchDb : Database
         }
     }
 
-    public override async Task ExecuteQuery(string query)
+    public override async Task ExecuteQuery(string query, params string[]? parameters)
     {
         var base64EncodedAuthenticationString = GetAuthenticationStringInBase64(new string[]{"admin", "password"});
         try

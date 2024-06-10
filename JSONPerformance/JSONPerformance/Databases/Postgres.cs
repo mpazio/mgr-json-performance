@@ -59,7 +59,7 @@ public class Postgres : Database
         }
     }
 
-    public override async Task ExecuteQuery(string query)
+    public override async Task ExecuteQuery(string query, params string[]? parameters)
     {
         if (!await IsConnected()) return;
         await using (var cmd = new NpgsqlCommand())

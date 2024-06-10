@@ -56,15 +56,20 @@ public class Oracle : Database
         }
     }
 
-    public override async Task ExecuteQuery(string query)
+    public override async Task ExecuteQuery(string query , params string[]? parameters)
     {
         if (!await IsConnected()) return;
         await using (var cmd = new OracleCommand())
         {
+            Console.WriteLine(query);
             cmd.Connection = _connection;
             cmd.CommandText = query;
 
-            await cmd.ExecuteNonQueryAsync();
+            var res  = await cmd.ExecuteReaderAsync();
+            while (await res.ReadAsync())
+            {
+                
+            }
         }
     }
 
@@ -79,9 +84,14 @@ public class Oracle : Database
             cmd.CommandText = query;
 
             var reader = await cmd.ExecuteReaderAsync();
+            
             while (await reader.ReadAsync())
             {
-                res += reader.GetValue(0) + "\n";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    res += reader.GetValue(i) + " ";
+                }
+                
             }
         }
 

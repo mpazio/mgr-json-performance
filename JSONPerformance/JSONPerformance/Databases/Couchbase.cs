@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Couchbase;
+using Couchbase.Query;
 using MongoDB.Bson;
 using Newtonsoft.Json.Linq;
 
@@ -55,9 +56,10 @@ public class Couchbase : Database
         await _cluster.QueryAsync<BsonDocument>($"DELETE FROM {tableName}");
     }
 
-    public override async Task ExecuteQuery(string query)
+    public override async Task ExecuteQuery(string query, params string[]? parameters)
     {
         var results = await _cluster.QueryAsync<dynamic>(query);
+        var rows = await results.Rows.ToListAsync();
     }
 
     public override async Task<string> ExecuteQueryAndReturnStringResult(string query, params string[]? parameters)
