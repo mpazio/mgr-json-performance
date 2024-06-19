@@ -73,8 +73,12 @@ public class MongoDb: Database
 
     public override async Task ExecuteQuery(string query, params string[]? parameters)
     {
-        Console.WriteLine(query);
-        var db = Client.GetDatabase("test");
+        if (parameters.Length < 1)
+            throw new ArgumentOutOfRangeException(nameof(parameters));
+        
+        var dbParam = parameters[0];
+        
+        var db = Client.GetDatabase(dbParam);
         var bsonQuery = new JsonCommand<BsonDocument>(query);
         var res = db.RunCommandAsync(bsonQuery).ToAsyncEnumerable();
         var e = res.GetAsyncEnumerator();
@@ -82,7 +86,7 @@ public class MongoDb: Database
         {
             while (await e.MoveNextAsync())
             {
-                Console.WriteLine(e.Current.ToString());
+                // Console.WriteLine(e.Current.ToString());
             };
         }
         finally { if (e != null) await e.DisposeAsync(); }
@@ -98,12 +102,6 @@ public class MongoDb: Database
         var db = Client.GetDatabase(databaseName);
         var bsonQuery = new JsonCommand<BsonDocument>(query);
         var res = await db.RunCommandAsync(bsonQuery);
-
-        // var jsonRes = JsonSerializer.Serialize(res, new JsonSerializerOptions()
-        // {
-        //     WriteIndented = true,
-        //     PropertyNameCaseInsensitive = true
-        // });
         
         return res.ToString();
     }
