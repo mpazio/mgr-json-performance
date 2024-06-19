@@ -8,15 +8,15 @@ using Xunit;
 
 namespace JSONPerformance.Tests.Databases;
 
-[TestSubject(typeof(Mongo))]
-public class MongoTest
+[TestSubject(typeof(MongoDb))]
+public class MongoDbTest
 {
 
     [Fact]
     public void CheckIfMongoClientIsCreatedDuringConstruction()
     {
         // Arrange
-        var mongo = new Mongo("mongodb://localhost:27017");
+        var mongo = new MongoDb("mongodb://localhost:27017");
 
         // Assert
         Assert.IsType<MongoClient>(mongo.Client);
@@ -28,7 +28,7 @@ public class MongoTest
         // Arrange
         var connectionString = "mongodb://localhost:27017";
         var mockMongoClient = new Mock<IMongoClient>();
-        var mongo = new Mongo(connectionString);
+        var mongo = new MongoDb(connectionString);
         mongo.Client = mockMongoClient.Object;
 
         // Act
@@ -51,7 +51,7 @@ public class MongoTest
 
         mockMongoClient.Setup(m => m.ListDatabaseNamesAsync(default)).ReturnsAsync(mockAsyncCursor.Object);
 
-        var mongo = new Mongo(connectionString);
+        var mongo = new MongoDb(connectionString);
         mongo.Client = mockMongoClient.Object;
 
         // Act
@@ -69,7 +69,7 @@ public class MongoTest
         var mockMongoClient = new Mock<IMongoClient>();
         mockMongoClient.Setup(m => m.ListDatabaseNamesAsync(default)).ThrowsAsync(null!);
 
-        var mongo = new Mongo(connectionString);
+        var mongo = new MongoDb(connectionString);
         mongo.Client = mockMongoClient.Object;
 
         // Act
